@@ -14,7 +14,7 @@ force <- FALSE
 #> applying the version 2, that uses the OBIS gridded product
 # For the previous version, see `get_species_lists.R`
 if (force | !any(grepl("all_splist", list.files("data")))) {
-    source("codes/get_species_lists_grid.R")
+    source("codes/get_species_list_grid.R")
 }
 
 #> Step 2: Download species data
