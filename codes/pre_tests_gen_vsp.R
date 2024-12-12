@@ -77,12 +77,12 @@ vsp2_funs <- virtualspecies::formatFunctions(
 )
 
 gen_vsp(layers_1, vsp1_funs, vsp_name = "Virtual species 1",
-        vsp_class = "all_var_coastal_vsp", save_key = "1001", plot = F,
+        vsp_class = "all_var_coastal_vsp", save_key = "1001", plot = T,
         samp_bias_layer = bias_layer, samp_constr_shape = starea,
         pred_fut = future_list)
 
 gen_vsp(layers_2, vsp2_funs, vsp_name = "Virtual species 2",
-        vsp_class = "part_var_coastal_vsp", save_key = "1002", plot = F,
+        vsp_class = "part_var_coastal_vsp", save_key = "1002", plot = T,
         samp_bias_layer = bias_layer, samp_constr_shape = starea,
         pred_fut = future_list_2)
 

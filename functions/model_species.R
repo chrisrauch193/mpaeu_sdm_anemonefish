@@ -280,7 +280,7 @@ model_species <- function(species,
     # Assess SAC
     fit_pts_sac <- try(obissdm::outqc_sac_mantel(fit_pts, 
                                                  env_layers = terra::subset(env$layers, env$hypothesis[[1]]),
-                                                 plot_result = FALSE,
+                                                 plot_result = TRUE,
                                                  verbose = verb_2))
     
     if (inherits(fit_pts_sac, "try-error")) {

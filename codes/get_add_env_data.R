@@ -11,14 +11,14 @@ library(terra)
 library(stars)
 
 
-# Wavefetch aggregated layers ----
-download.file("https://figshare.com/ndownloader/articles/8668127/versions/1",
-  destfile = "data/raw/wavefetch.zip",
-  method = "wget")
-
-unzip("data/raw/wavefetch.zip", exdir = "data/raw/wavefetch")
-file.remove("data/raw/wavefetch.zip")
-
+# # Wavefetch aggregated layers ----
+# download.file("https://figshare.com/ndownloader/articles/8668127/versions/1",
+#   destfile = "data/raw/wavefetch.zip",
+#   method = "wget")
+# 
+# unzip("data/raw/wavefetch.zip", exdir = "data/raw/wavefetch")
+# file.remove("data/raw/wavefetch.zip")
+# 
 lf <- list.files("data/raw/wavefetch", full.names = T)
 lf <- lf[!grepl("aux", lf)]
 
@@ -34,13 +34,14 @@ mosaic_rast <- rast("data/temp_wavef.tif")
 
 base_file <- rast("data/env/current/thetao_baseline_depthsurf_mean.tif")
 
-europe <- vect("data/shapefiles/mpa_europe_starea_v2.shp")
+asia <- vect("data/shapefiles/output.shp")
+# asia <- vect("data/shapefiles/mpa_europe_starea_v2.shp")
 
 reproj <- project(mosaic_rast, base_file)
-reproj <- crop(reproj, ext(europe))
+reproj <- crop(reproj, ext(asia))
 
 plot(reproj)
-lines(europe)
+lines(asia)
 
 names(reproj) <- "wavefetch"
 writeRaster(reproj, "data/env/terrain/wavefetch.tif", overwrite = T)
@@ -55,7 +56,8 @@ base <- rast("data/env/current/thetao_baseline_depthsurf_mean.tif")
 coast <- base
 coast[] <- NA
 
-coast_mask <- mask(coast, base, updatevalue = 1, inverse = F)
+coast_mask <- mask(coast, base
+                   , updatevalue = 1, inverse = F)
 plot(coast_mask)
 
 coast_agg <- aggregate(coast_mask, 4, na.rm = T)
