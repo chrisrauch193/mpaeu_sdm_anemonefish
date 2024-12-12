@@ -13,10 +13,10 @@
 # kingdom == 'Chromista' | kingdom == 'Plantae'
 # For character, use single ''
 groups:
-  seabirds: class == 'Aves'
-  photosynthesizers: kingdom == 'Chromista' | kingdom == 'Plantae'
-  mammals: class == 'Mammalia'
-  others: kingdom != 'Chromista' & kingdom != 'Plantae' & class != 'Aves' & class != 'Mammalia'
+  sea_anemones: order == 'Actiniaria'
+  anemonefish: genus == 'Amphiprion'
+  
+  
   
 # Put here the list of variables that will be used for each group
 # The order is variables (don't edit) > group name (should be equal to the previous section) > 'hypothesis' > list of variables
@@ -34,53 +34,7 @@ groups:
 #      - variable2_max
 #      - variable3_min
 variables:
-  seabirds:
-    basevars:
-      - tas_mean
-      - siconc_max
-      - thetao_mean
-      - bathymetry_mean
-      - distcoast
-      - sws_max
-    coastal:
-      - tas_mean
-      - siconc_max
-      - thetao_mean
-      - bathymetry_mean
-      - distcoast
-      - sws_max
-      - wavefetch
-  photosynthesizers:
-    basevars:
-      - thetao_mean
-      - bathymetry_mean
-      - distcoast
-      - sws_max
-      - so_min
-      - no3_mean
-      - par_mean
-    coastal:
-      - thetao_mean
-      - bathymetry_mean
-      - distcoast
-      - sws_max
-      - so_min
-      - no3_mean
-      - par_mean
-      - wavefetch
-      #- slope
-      - rugosity
-    complexity:
-      - thetao_mean
-      - bathymetry_mean
-      - distcoast
-      - sws_max
-      - so_min
-      - no3_mean
-      - par_mean
-      #- slope
-      - rugosity
-  mammals:
+  sea_anemones:
     basevars:
       - siconc_max
       - thetao_mean
@@ -95,8 +49,8 @@ variables:
       - distcoast
       - sws_max
       - so_mean
-      - wavefetch
-  others:
+      # - wavefetch
+  anemonefish:
     basevars:
       - thetao_mean
       - thetao_range
@@ -113,7 +67,7 @@ variables:
       - sws_max
       - so_mean
       - o2_mean
-      - wavefetch
+      # - wavefetch
       - rugosity
       #- slope
     complexity:

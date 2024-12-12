@@ -1,0 +1,129 @@
+# Project title: MPA Europe - Species Distribution Modeling (OBIS contribution)
+# Authors: Silas Principe (s.principe@unesco.org), Pieter Provoost
+#
+# This is a configuration file for the SDMs. It's used to configure (1) the groups
+# for which to obtain the SDMs and (2) the variables to use when fitting the SDMs
+# YAML files use the identation to establish list levels, so it's important to keep it consistent
+# Don't use tabulation, use 2 spaces instead.
+#
+# File version: 3 (2024-06-03)
+---
+# Fill here with the conditions to get the groups.
+# For example, the group photosynthesizers have to met the condition
+# kingdom == 'Chromista' | kingdom == 'Plantae'
+# For character, use single ''
+groups:
+  seabirds: class == 'Aves'
+  photosynthesizers: kingdom == 'Chromista' | kingdom == 'Plantae'
+  mammals: class == 'Mammalia'
+  others: kingdom != 'Chromista' & kingdom != 'Plantae' & class != 'Aves' & class != 'Mammalia'
+  
+# Put here the list of variables that will be used for each group
+# The order is variables (don't edit) > group name (should be equal to the previous section) > 'hypothesis' > list of variables
+# setting an hypothesis ("name of hypothesis") is useful if you want to test multiple variables settings
+# If you want to use a single hypothesis, simple leave only one hypothesis.
+# Names of variable should be written on the format NAME_VARIANT(e.g. mean, min, max)
+# So, for example, to get the mean temperature for the sea we would set: thetao_mean
+# Example:
+# variables:
+#  fishes:
+#    hypothesis1:
+#      - variable1_mean
+#      - variable2_max
+#    hypothesis2:
+#      - variable2_max
+#      - variable3_min
+variables:
+  seabirds:
+    basevars:
+      - tas_mean
+      - siconc_max
+      - thetao_mean
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+    coastal:
+      - tas_mean
+      - siconc_max
+      - thetao_mean
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - wavefetch
+  photosynthesizers:
+    basevars:
+      - thetao_mean
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_min
+      - no3_mean
+      - par_mean
+    coastal:
+      - thetao_mean
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_min
+      - no3_mean
+      - par_mean
+      - wavefetch
+      #- slope
+      - rugosity
+    complexity:
+      - thetao_mean
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_min
+      - no3_mean
+      - par_mean
+      #- slope
+      - rugosity
+  mammals:
+    basevars:
+      - siconc_max
+      - thetao_mean
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_mean
+    coastal:
+      - siconc_max
+      - thetao_mean
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_mean
+      - wavefetch
+  others:
+    basevars:
+      - thetao_mean
+      - thetao_range
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_mean
+      - o2_mean
+    coastal:
+      - thetao_mean
+      - thetao_range
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_mean
+      - o2_mean
+      - wavefetch
+      - rugosity
+      #- slope
+    complexity:
+      - thetao_mean
+      - thetao_range
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_mean
+      - o2_mean
+      - rugosity
+      #- slope
+# END of configuration file
