@@ -7,9 +7,15 @@
 ############################ Check for colinearity #############################
 
 # Load packages
-library(terra)
 library(obissdm)
+library(robis)
+library(arrow)
+library(terra)
+library(dplyr)
+
+# Settings
 set.seed(2023)
+
 
 # All croping and masking will be done for each layer
 # The depth of cut is registered in the model log file
@@ -19,13 +25,87 @@ set.seed(2023)
 # The final decision on which remain is, however, done by hand
 
 
+
+# Retrieve data from GitHub
+# download.file("https://github.com/iobis/mpaeu_sdm/raw/66c89b61eef69b29378075b923133e7c66d23a70/snapshot/std_records_20231027.parquet",
+#               destfile = "records.parquet")
+# 
+# download.file("https://github.com/iobis/mpaeu_sdm/raw/66c89b61eef69b29378075b923133e7c66d23a70/snapshot/std_splist_20231027.parquet",
+#               destfile = "splist.parquet")
+
+# Load species data
+occ <- open_dataset("records.parquet")
+occ
+
+# The species list we can load in its full
+splist <- read_parquet("splist.parquet")
+head(splist)
+
+
+# Chose species
+# tg_sp <- 290090
+tg_sp <- 100803
+conf_path <- "sdm_conf.yml"
+
+
+# Get the path to the configuration file
+# download.file("https://raw.githubusercontent.com/iobis/mpaeu_sdm/main/sdm_conf.yml", "sdm_conf.yml")
+conf_path <- "sdm_conf.yml"
+# If you want to see the content, just run the following two lines:
+conf_content <- yaml::read_yaml(conf_path)
+conf_content
+
+
+# Include list of species groups in the list
+splist_groups <- get_listbygroup(splist, conf_path)
+
+head(splist_groups)
+
+
+
+# Select one hypothesis
+chos_hypothesis <- "basevars"
+
+# Get the group of the species
+chos_group <- splist_groups$sdm_group[splist_groups$taxonID == tg_sp]
+
+# Get the variables list
+chos_vars <- get_conf("sdm_conf.yml", what = "variables")
+chos_vars <- chos_vars$variables[[chos_group]][[chos_hypothesis]]
+
+
+env <- rast("data/env/current/thetao_baseline_depthsurf_mean.tif")
+plot(env)
+
+
+
+
+# Get env data
+env_sdm <- get_envofgroup(chos_group)
+
+env_sdm
+
+# Get data for only the chosen species
+pts <- occ %>%
+  filter(taxonID == tg_sp) %>%
+  collect() # We use collect here to get the data from the Parquet dataset
+
+head(pts)
+
+
+
+
+
+
+
 # Prepare layers
 clip_area <- ext(-41, 47, 20, 89)
 
 mask_area <- vect("data/shapefiles/mpa_europe_starea_v2.shp")
 
 groups <- names(get_conf(what = "groups")$groups)
-depth_env <- c("depthsurf", "depthmean")
+# depth_env <- c("depthsurf", "depthmean")
+depth_env <- c("depthsurf")
 
 test_grid <- expand.grid(groups, depth_env, stringsAsFactors = F)
 
@@ -33,19 +113,31 @@ test_grid <- expand.grid(groups, depth_env, stringsAsFactors = F)
 # Create a list to hold the results of vif step
 vif_step_list <- list()
 
-for (i in 1:nrow(test_grid)) {
-  env_layers <- get_envofgroup(group = test_grid[i, 1],
-                               depth = test_grid[i, 2],
-                               load_all = T,
-                               verbose = TRUE)
-  
-  nams <- unique(unlist(env_layers$hypothesis))
-  nams <- nams[!grepl("wavefetch", nams)]
-  
-  env_layers <- terra::subset(env_layers$layers, nams)
-  
-  vif_step_list[[i]] <- usdm::vifstep(env_layers, th = 5)
-}
+print("HERE 1")
+
+# for (i in 1:nrow(test_grid)) {
+#   # env_layers <- get_envofgroup(group = test_grid[i, 1],
+#   #                              depth = test_grid[i, 2],
+#   #                              load_all = T,
+#   #                              verbose = TRUE)
+#   env_layers <- get_envofgroup(chos_group)
+# 
+#   # nams <- unique(unlist(env_layers$hypothesis))
+#   # nams <- nams[!grepl("wavefetch", nams)]
+#   # 
+#   # env_layers <- terra::subset(env_layers$layers, nams)
+# 
+#   vif_step_list[[i]] <- usdm::vifstep(env_layers, th = 5)
+# }
+
+env_layers <- get_envofgroup(chos_group)
+vif_step_list[[i]] <- usdm::vifstep(env_layers, th = 5)
+
+print("HERE 2")
+
+vif_step_list[[1]] <- vif_step_list[[2]]
+
+vif_step_list
 
 # See which ones have collinearity problems
 which_excluded <- lapply(1:length(vif_step_list), function(x) {
@@ -59,9 +151,13 @@ which_excluded <- lapply(1:length(vif_step_list), function(x) {
   }
 })
 
+print("HERE 22")
+
 to_check <- unlist(which_excluded)
 
 to_check
+
+print("HERE 3")
 
 
 # For those we will get the correlation matrix
@@ -72,14 +168,16 @@ for (i in to_check) {
                                depth = test_grid[i, 2],
                                load_all = T,
                                verbose = FALSE)
-  
+
   nams <- unique(unlist(env_layers$hypothesis))
   nams <- nams[!grepl("wavefetch", nams)]
-  
+
   env_layers <- terra::subset(env_layers$layers, nams)
-  
+
   vif_list[[i]] <- usdm::vif(env_layers)
 }
+
+print("HERE 4")
 
 # Print the results
 for (i in to_check) {
@@ -88,6 +186,8 @@ for (i in to_check) {
   cat("\n")
 }
 
+
+print("HERE 5")
 
 # The problem is, in general, between thetao-* and some other variable
 # The high correlation between SST and air temperature was expected.
@@ -105,12 +205,12 @@ for (i in to_check) {
                                depth = test_grid[i, 2],
                                load_all = T,
                                verbose = FALSE)
-  
+
   nams <- unique(unlist(env_layers$hypothesis))
   nams <- nams[!grepl("wavefetch", nams)]
-  
+
   env_layers <- terra::subset(env_layers$layers, nams)
-  
+
   vif_list[[i]] <- usdm::vif(env_layers)
 }
 
