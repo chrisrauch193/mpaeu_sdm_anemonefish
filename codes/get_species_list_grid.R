@@ -20,14 +20,20 @@ library(rgbif)
 
 sf_use_s2(FALSE)
 
+print("ALright hwgg")
+
 # Load study area
-starea <- st_read("data/shapefiles/mpa_europe_starea_v2.shp")
+starea <- st_read("data/shapefiles/mpa_asia_starea_v1.shp")
 cells <- data.frame(cell = polygon_to_cells(starea, 7)[[1]]) # takes some time
+
+print("Alright I'm here")
 
 # Set up DuckDB connection
 con <- dbConnect(duckdb())
 dbSendQuery(con, "install httpfs; load httpfs;")
 duckdb_register(con, "cells", cells)
+
+print("Alasdasdase")
 
 species <- dbGetQuery(con, "
   select species, AphiaID, source_obis, source_gbif
@@ -36,27 +42,28 @@ species <- dbGetQuery(con, "
   group by species, AphiaID, source_obis, source_gbif
 ")
 
+print("Aasdasdasdasdasdasdasdasdasd here")
+
 head(species)
 
 # Define the target species (Anemones and Anemonefish)
 target_species <- c(
-  # Anemone Species
-  "Cryptodendrum adhaesivum",
-  "Entacmaea quadricolor",
-  "Heteractis crispa",
+  # # Anemone Species
+  # "Cryptodendrum adhaesivum",
+  # "Entacmaea quadricolor",
+  # "Heteractis crispa",
   "Heteractis magnifica",
-  "Macrodactyla doreensis",
+  # "Macrodactyla doreensis",
   "Stichodactyla gigantea",
-  "Stichodactyla mertensii",
-  # Anemonefish Species
-  "Amphiprion clarkii",
-  "Amphiprion frenatus",
-  "Amphiprion ocellaris",
-  "Amphiprion perideraion",
-  "Amphiprion polymnus",
-  "Amphiprion sandaracinos"
+  # "Stichodactyla mertensii",
+  # # Anemonefish Species
+  # "Amphiprion clarkii",
+  # "Amphiprion frenatus",
+  "Amphiprion ocellaris"
+  # "Amphiprion perideraion",
+  # "Amphiprion polymnus",
+  # "Amphiprion sandaracinos"
 )
-
 # Filter species to only the target taxa
 species <- species %>% filter(species %in% target_species)
 

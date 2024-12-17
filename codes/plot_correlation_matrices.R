@@ -8,7 +8,7 @@ library(kableExtra)
 library(grid)  # Add this line to load the 'grid' package
 
 # --- Input ---
-rds_file <- "data/log/vif_list_20241212.rds" # Path to your .rds file
+rds_file <- "data/log/vif_list_20241213.rds" # Path to your .rds file
 
 # --- Load Data ---
 vif_results <- readRDS(rds_file)

@@ -36,24 +36,48 @@ groups:
 variables:
   sea_anemones:
     basevars:
-      - so_min
-      - so_mean
-      - so_max
-      - distcoast
-      - thetao_min
+      - siconc_max
       - thetao_mean
-      - thetao_max
-      - phyc_mean
       - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_mean
+    coastal:
+      - siconc_max
+      - thetao_mean
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_mean
+      # - wavefetch
   anemonefish:
     basevars:
-      - so_min
-      - so_mean
-      - so_max
-      - distcoast
-      - thetao_min
       - thetao_mean
-      - thetao_max
-      - phyc_mean
+      - thetao_range
       - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_mean
+      - o2_mean
+    coastal:
+      - thetao_mean
+      - thetao_range
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_mean
+      - o2_mean
+      # - wavefetch
+      - rugosity
+      #- slope
+    complexity:
+      - thetao_mean
+      - thetao_range
+      - bathymetry_mean
+      - distcoast
+      - sws_max
+      - so_mean
+      - o2_mean
+      - rugosity
+      #- slope
 # END of configuration file

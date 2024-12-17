@@ -39,7 +39,7 @@
   
   if ("coastal" %in% names(env$hypothesis)) {
     # Test if is within europe/coastal
-    europe_starea <- terra::vect("data/shapefiles/mpa_europe_starea_v2.shp")
+    europe_starea <- terra::vect("data/shapefiles/mpa_asia_starea_v1.shp")
     europe_starea <- terra::ext(europe_starea)
     
     is_within <- terra::is.related(terra::vect(species_data[,coord_names], geom = coord_names),

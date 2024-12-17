@@ -16,16 +16,16 @@ library(dplyr)
 fs::dir_create("data/raw/")
 
 # Get data from OBIS ----
-api_call <- httr::content(httr::GET("https://api.obis.org/export?complete=true"), as = "parsed")
-api_call <- api_call$results[[1]]
-latest_export <- paste0("https://obis-datasets.ams3.digitaloceanspaces.com/", api_call$s3path)
-
-options(timeout = 999999999)
-download.file(
-    url = latest_export,
-    destfile = paste0("data/raw/", gsub("exports/", "", api_call$s3path)),
-    method = "wget"
-)
+# api_call <- httr::content(httr::GET("https://api.obis.org/export?complete=true"), as = "parsed")
+# api_call <- api_call$results[[1]]
+# latest_export <- paste0("https://obis-datasets.ams3.digitaloceanspaces.com/", api_call$s3path)
+# 
+# options(timeout = 999999999)
+# download.file(
+#     url = latest_export,
+#     destfile = paste0("data/raw/", gsub("exports/", "", api_call$s3path)),
+#     method = "wget"
+# )
 
 
 # Get data from GBIF ----
@@ -60,28 +60,28 @@ if(any(grepl("order=NULL", list.files(gbif_res)))) {
 
 # # Download full export and subset ----
 # gbif_res <- occurrence_gbif_db(export_path = "data/raw", verbose = T)
-
+# 
 # gbif_ds <- open_dataset(gbif_res)
-
+# 
 # gbif_ds %>%
 #   select(-identifiedby, -recordedby, -typestatus, -mediatype, -issue) %>%
 #   filter(taxonkey %in% na.omit(sp_list$gbif_speciesKey)) %>%
 #   group_by(order) %>%
 #   write_dataset(path = paste0("gbif_", format(Sys.Date(), "%Y%m%d")),
 #                 format = "parquet")
-
+# 
 # file.rename(paste0("gbif_", format(Sys.Date(), "%Y%m%d"), "/order=__HIVE_DEFAULT_PARTITION__"),
 #             paste0("gbif_", format(Sys.Date(), "%Y%m%d"), "/order=noorder"))
-
+# 
 # # Optional: remove the full export
 # # fs::file_delete(gbif_res)
 
 
-# Download through the GBIF API ----
+# # Download through the GBIF API ----
 # # Because we already have the GBIF taxonKey we can supply this to the function
 # # Download and save
 # gbif_res <- mp_get_gbif(sci_names = na.omit(sp_list$gbif_speciesKey))
-
+# 
 # # It is likely that the download will fail, as our request is very big
 # # It can take up to 3h to process big requests
 # if (inherits(gbif_res, "occ_download")) {
@@ -102,7 +102,7 @@ if(any(grepl("order=NULL", list.files(gbif_res)))) {
 #             unzip(paste0("data/raw/", gbif_res, ".zip"),
 #                 exdir = "data/raw/"
 #             )
-
+# 
 #             file.rename(
 #                 "data/raw/occurrence.parquet",
 #                 glue::glue("data/raw/gbif_{save_acro}_{format(Sys.Date(), '%Y%m%d')}.parquet")
@@ -111,7 +111,7 @@ if(any(grepl("order=NULL", list.files(gbif_res)))) {
 #                 "data/raw/", gbif_res,
 #                 ".zip"
 #             ))
-
+# 
 #             write.table(
 #                 data.frame(
 #                     date = attr(
@@ -125,7 +125,7 @@ if(any(grepl("order=NULL", list.files(gbif_res)))) {
 #                 ), glue::glue("data/gbif_full_download_log.txt"),
 #                 row.names = F
 #             )
-
+# 
 #             done <- TRUE
 #         } else if (gbif_status == "FAILED") {
 #             stop("Problem in the download.\n")

@@ -14,7 +14,7 @@ library(worrms)
 sf_use_s2(FALSE)
 
 # Load study area
-starea <- st_read("data/shapefiles/mpa_europe_starea_v2.shp")
+starea <- st_read("data/shapefiles/mpa_asia_starea_v1.shp")
 starea <- st_buffer(starea, 0.5)
 
 starea_bbox <- st_bbox(starea)

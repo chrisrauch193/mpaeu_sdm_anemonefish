@@ -80,6 +80,12 @@ model_species <- function(species,
                           quad_samp = 50000,
                           cleanup = TRUE,
                           verbose = FALSE) {
+  cli::cli_inform("ASJDHLJKASDKLASJDLKASJD")
+  cli::cli_inform("Current working directory: {.path {getwd()}}")
+  cli::cli_inform("ASJDHLJKASDKLASJDLKASJD")
+  
+  cat("OMGOGMOGMOGMGOOGM")  
+  
   
   # Check verbosity
   verb_1 <- verb_2 <- FALSE
@@ -121,6 +127,8 @@ model_species <- function(species,
   pred_out <- paste0(outfolder, "/taxonid=", species, "/model=", outacro, "/predictions/")
   mod_out <- paste0(outfolder, "/taxonid=", species, "/model=", outacro, "/models/")
   fig_out <- paste0(outfolder, "/taxonid=", species, "/model=", outacro, "/figures/")
+  
+  setwd("/home/bi-server-kyoto/a0236995/mpaeu_sdm_anemonefish")
   
   # Load species data
   if (verb_1) cli::cli_alert_info("Reading data")
@@ -241,7 +249,7 @@ model_species <- function(species,
       bath[bath < bath_range[1] | bath > bath_range[2]] <- NA
       
       if ("coastal" %in% names(env$hypothesis)) {
-        europe_starea <- terra::vect("data/shapefiles/mpa_europe_starea_v2.shp")
+        europe_starea <- terra::vect("data/shapefiles/mpa_asia_starea_v1.shp")
         bath <- terra::crop(bath, europe_starea)
         env$layers <- terra::mask(terra::crop(env$layers, ecoreg_sel), bath)
         env$layers <- terra::mask(env$layers, env$layers$wavefetch)
@@ -254,7 +262,7 @@ model_species <- function(species,
       
     } else {
       if ("coastal" %in% names(env$hypothesis)) {
-        europe_starea <- terra::vect("data/shapefiles/mpa_europe_starea_v2.shp")
+        europe_starea <- terra::vect("data/shapefiles/mpa_asia_starea_v1.shp")
         ecoreg_sel <- terra::crop(ecoreg_sel, europe_starea)
         env$layers <- terra::mask(env$layers, ecoreg_sel)
       } else {

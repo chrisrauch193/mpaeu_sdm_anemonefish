@@ -27,7 +27,7 @@ ssp1 <- load_env(env_vars, scenario = "ssp126", terrain_vars = "bathymetry_mean"
 ssp5 <- load_env(env_vars, scenario = "ssp585", terrain_vars = "bathymetry_mean")
 
 # Load study area shapefile
-starea <- vect("data/shapefiles/mpa_europe_starea_v2.shp")
+starea <- vect("data/shapefiles/mpa_asia_starea_v1.shp")
 exp_starea <-  ext(-41, 47, 20, 89) # ext(starea) +- 5 degrees
 
 # Crop to the expanded area (only the one that will be used for

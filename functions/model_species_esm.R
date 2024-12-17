@@ -251,7 +251,7 @@ model_species_esm <- function(species,
       bath[bath < bath_range[1] | bath > bath_range[2]] <- NA
       
       if ("coastal" %in% names(env$hypothesis)) {
-        europe_starea <- terra::vect("data/shapefiles/mpa_europe_starea_v2.shp")
+        europe_starea <- terra::vect("data/shapefiles/mpa_asia_starea_v1.shp")
         bath <- terra::crop(bath, europe_starea)
         env$layers <- terra::mask(terra::crop(env$layers, ecoreg_sel), bath)
         env$layers <- terra::mask(env$layers, env$layers$wavefetch)
@@ -264,7 +264,7 @@ model_species_esm <- function(species,
       
     } else {
       if ("coastal" %in% names(env$hypothesis)) {
-        europe_starea <- terra::vect("data/shapefiles/mpa_europe_starea_v2.shp")
+        europe_starea <- terra::vect("data/shapefiles/mpa_asia_starea_v1.shp")
         ecoreg_sel <- terra::crop(ecoreg_sel, europe_starea)
         env$layers <- terra::mask(env$layers, ecoreg_sel)
       } else {

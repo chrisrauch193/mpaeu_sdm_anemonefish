@@ -34,8 +34,7 @@ mosaic_rast <- rast("data/temp_wavef.tif")
 
 base_file <- rast("data/env/current/thetao_baseline_depthsurf_mean.tif")
 
-asia <- vect("data/shapefiles/output.shp")
-# asia <- vect("data/shapefiles/mpa_europe_starea_v2.shp")
+asia <- vect("data/shapefiles/mpa_asia_starea_v1.shp")
 
 reproj <- project(mosaic_rast, base_file)
 reproj <- crop(reproj, ext(asia))

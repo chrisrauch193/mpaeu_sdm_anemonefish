@@ -15,7 +15,7 @@ library(cli)
 sf_use_s2(FALSE)
 
 # Load study area
-starea <- st_read("data/shapefiles/mpa_europe_starea_v2.shp")
+starea <- st_read("data/shapefiles/mpa_asia_starea_v1.shp")
 starea <- st_buffer(starea, 0.5)
 
 # We first download a list of all species occurring in a bounding box around the

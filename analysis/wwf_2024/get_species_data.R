@@ -1,7 +1,10 @@
 # Prepare WWF list of species
+library(dplyr)
+library(obissdm)
+library(terra)
 
 # Load WWF list
-wwf_list <- readxl::read_excel("~/Downloads/Species List.xlsx")
+wwf_list <- readxl::read_excel("analysis/wwf_2024/Species List.xlsx")
 colnames(wwf_list) <- c(
   "vernacularName",
   "scientificNameWWF",
@@ -119,13 +122,13 @@ new_wwf_list_final[is.na(new_wwf_list_final$phylum), c("kingdom", "phylum", "cla
 write.csv(new_wwf_list_final, "analysis/wwf_2024/wwf_list.csv", row.names = F)
 
 # Download data not available on our previous download
-all_sp <- read.csv("data/all_splist_20240319.csv")
+all_sp <- read.csv("data/all_splist_20241213.csv")
 
 not_available <- new_wwf_list_final[!new_wwf_list_final$AphiaID %in% all_sp$taxonID,]
 
 setwd("../mpaeu_shared/")
 obissdm::mp_get_gbif(sci_names = not_available$gbif_speciesKey)
-setwd("../mpaeu_sdm/")
+setwd("../mpaeu_sdm_anemonefish/")
 
 # And then do the standardization
 for (i in 1:length(unique(not_available$AphiaID))) {

@@ -55,7 +55,7 @@ model_sp <- function(species) {
   ssp5 <- load_env(env_vars, depth = depth_env, scenario = "ssp585", terrain_vars = "bathymetry_mean")
   
   # Load study area shapefile
-  # starea <- vect("data/shapefiles/mpa_europe_starea_v2.shp")
+  # starea <- vect("data/shapefiles/mpa_asia_starea_v1.shp")
   exp_starea <-  ext(-41, 47, 20, 89) # ext(starea) +- 5 degrees
   
   # Crop to the expanded area (only the one that will be used for
@@ -328,7 +328,7 @@ for (sp in species_list) {
   curr <- load_env(env_vars, depth = depth_env, terrain_vars = "bathymetry_mean")
 
   # Load study area shapefile
-  # starea <- vect("data/shapefiles/mpa_europe_starea_v2.shp")
+  # starea <- vect("data/shapefiles/mpa_asia_starea_v1.shp")
   exp_starea <-  ext(-41, 47, 20, 89) # ext(starea) +- 5 degrees
 
   # Crop to the expanded area (only the one that will be used for

@@ -97,6 +97,7 @@ destroy_storr <- FALSE
 species_list <- read.csv(species_list)
 species_list <- get_listbygroup(species_list)
 
+
 if (length(sel_species) > 1 | !any("all" %in% sel_species)) {
   species_list <- species_list %>%
     filter(taxonID %in% sel_species)
@@ -255,3 +256,37 @@ if (destroy_storr) {
   cli::cli_alert_warning("Destroying `storr` object at {.path {paste0(outacro, '_storr')}}")
   st$destroy()
 }
+
+
+
+
+
+
+
+# Print all model results stored in the storr object
+cli::cli_rule("Model Results Summary")
+
+# Debugging block to print the current directory and its files
+cli::cli_alert_warning("Debug Info: Checking current directory and listing files")
+cli::cli_inform("Current working directory: {.path {getwd()}}")
+cli::cli_inform("Contents of 'data/species/':")
+print(list.files("data/species/", recursive = TRUE))
+
+
+species_ids <- st$list()  # Retrieve all species IDs stored in the storr
+
+for (species in species_ids) {
+  fit_result <- st$get(species)  # Retrieve the model result for each species
+  cli::cli_inform("Species ID: {.val {species}}")
+  
+  # Check if the result is a list (e.g., contains status or metrics)
+  if (is.list(fit_result)) {
+    print(fit_result)  # Print the full result
+  } else {
+    cat("Result: ", fit_result, "\n")  # Print non-list results (e.g., status strings)
+  }
+  
+  cli::cat_line()
+}
+
+cli::cli_alert_success("All model results printed.")

@@ -13,6 +13,6 @@ source("codes/prepare_dataqc.R")
 #> Step 2: Test environmental data for colinearity
 # Note that this should be done manually. Running the source code here
 # will just apply the same steps used in the original project
-source("codes/prepare_envdata.R")
+# source("codes/prepare_envdata.R")
 
 # END

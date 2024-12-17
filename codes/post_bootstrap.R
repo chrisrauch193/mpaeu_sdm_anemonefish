@@ -30,7 +30,7 @@ results_folder <- "results"
 
 # Set species to run
 # To run specific species, uncomment below and comment the others
-sel_species <- c(124287)
+sel_species <- c(278400, 291133)
 # Otherwise, use species that were effectively modeled
 # st_sdm <- storr_rds(paste0(acro, "_storr"))
 # st_sdm_done <- st_sdm$list()
