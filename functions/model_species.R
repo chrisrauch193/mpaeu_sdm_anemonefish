@@ -80,13 +80,8 @@ model_species <- function(species,
                           quad_samp = 50000,
                           cleanup = TRUE,
                           verbose = FALSE) {
-  cli::cli_inform("ASJDHLJKASDKLASJDLKASJD")
   cli::cli_inform("Current working directory: {.path {getwd()}}")
-  cli::cli_inform("ASJDHLJKASDKLASJDLKASJD")
-  
-  cat("OMGOGMOGMOGMGOOGM")  
-  
-  
+
   # Check verbosity
   verb_1 <- verb_2 <- FALSE
   if (is.numeric(verbose)) {

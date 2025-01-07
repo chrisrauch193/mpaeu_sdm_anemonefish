@@ -21,14 +21,14 @@
     #to do!
   } else if (any(grepl("key", list.files(species_dataset, recursive = T)))) {
     lf <- list.files(species_dataset, recursive = T)
-    lf <- lf[grepl(paste0("key=", species, ".parquet"), lf)]
+    lf <- lf[grepl(paste0("key=", species, ".*\\.parquet"), lf)]
     if (length(lf) > 0) {
       species_data <- arrow::read_parquet(paste0(species_dataset, "/", lf))
     } else {
       species_data <- matrix(nrow = 0, ncol = 1)
     }
   } else {
-    cli::cli_abort("No folder or files were found in {.path {species_dataset}}")
+    cli::cli_abort("No folder or files were found in asdads{.path {species_dataset}}")
   }
   
   return(species_data)

@@ -4,5 +4,6 @@ sel_species <- gsub("key=", "", sel_species)
 sel_species <- gsub("\\.parquet", "", sel_species)
 sel_species <- as.numeric(sel_species)
 #sel_species <- sel_species[sel_species != 137205]
+sel_species <- sel_species[sel_species == 278400]
 
 source("codes/model_fit.R")
