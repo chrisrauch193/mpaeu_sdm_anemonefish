@@ -52,19 +52,25 @@ datasets <- c(datasets,
 
 
 # List scenarios to download ----
-future_scenarios <- c("ssp126", "ssp245", "ssp370", "ssp460", "ssp585")
+# future_scenarios <- c("ssp126", "ssp245", "ssp370", "ssp460", "ssp585")
+future_scenarios <- c()
+
 
 
 # Define time steps ----
+# time_steps <- list(
+#   current = c("2000-01-01T00:00:00Z", "2010-01-01T00:00:00Z"), #2000-2010/2010-2020
+#   dec50 = c("2030-01-01", "2040-01-01"), #2030-2040/2040-2050
+#   dec100 = c("2080-01-01", "2090-01-01") #2080-2090/2090-2100
+# )
 time_steps <- list(
-  current = c("2000-01-01T00:00:00Z", "2010-01-01T00:00:00Z"), #2000-2010/2010-2020
-  dec50 = c("2030-01-01", "2040-01-01"), #2030-2040/2040-2050
-  dec100 = c("2080-01-01", "2090-01-01") #2080-2090/2090-2100
+  current = c("2000-01-01T00:00:00Z", "2010-01-01T00:00:00Z")
 )
 
 # Define variables to be downloaded
 # In general, available are: min, mean, max, range, ltmin, ltmax, and sd
-variables <- c("min", "mean", "max")
+# variables <- c("min", "mean", "max")
+variables <- c("mean")
 
 
 get_env_data(datasets = datasets, future_scenarios = future_scenarios,

@@ -11,9 +11,9 @@
 
 #> Step 2: Download base files from Amazon cloud
 #> This will download shapefiles and other accessory files necessary
-#download.file("s3://obis.org/mpaeu_sdm", destfile = "amzn_files.zip")
-#unzip("amzn_files.zip")
-#file.remove("amzn_files.zip")
+# download.file("s3://obis.org/mpaeu_sdm", destfile = "amzn_files.zip")
+# unzip("amzn_files.zip")
+# file.remove("amzn_files.zip")
 
 #> Step 3: Install dependencies
 source("requirements.R")

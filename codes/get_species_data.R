@@ -83,7 +83,7 @@ colnames(gbif_new_keys) <- c("key", "new_key")
 #               batch_size = 100)
 
 # Split OBIS dataset
-split_dataset("data/raw/obis_20241202.parquet",
+split_dataset("data/raw/obis_20241212.parquet",
               database_name = "obis",
               grouping_key = "AphiaID",
               sel_keys = obis_splist$taxonID,

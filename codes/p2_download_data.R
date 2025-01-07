@@ -23,6 +23,7 @@ if (force | !any(grepl("all_splist", list.files("data")))) {
 # An alternative option is to download just the subset. See `get_species_data.R`
 if (force | !any(grepl("obis", list.files("data/raw"))) | !any(grepl("gbif", list.files("data/raw")))) {
     source("codes/get_species_data_full.R")
+    # source("codes/get_species_data.R")
 }
 
 #> Step 3: Download environmental data
