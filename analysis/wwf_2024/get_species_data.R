@@ -122,22 +122,26 @@ new_wwf_list_final[is.na(new_wwf_list_final$phylum), c("kingdom", "phylum", "cla
 write.csv(new_wwf_list_final, "analysis/wwf_2024/wwf_list.csv", row.names = F)
 
 # Download data not available on our previous download
-all_sp <- read.csv("data/all_splist_20241213.csv")
+all_sp <- read.csv("data/all_splist_20240724.csv")
 
 not_available <- new_wwf_list_final[!new_wwf_list_final$AphiaID %in% all_sp$taxonID,]
 
-setwd("../mpaeu_shared/")
+# Move to mpaeu_shared dir
+setwd("../")
 obissdm::mp_get_gbif(sci_names = not_available$gbif_speciesKey)
-setwd("../mpaeu_sdm_anemonefish/")
+# Move back
+setwd("mpaeu_sdm_anemonefish/")
+
+not_available$AphiaID <- not_available$AphiaID[not_available$AphiaID != 272249]
 
 # And then do the standardization
 for (i in 1:length(unique(not_available$AphiaID))) {
   if (!file.exists(paste0("data/species/", "key=", unique(not_available$AphiaID)[i], ".parquet"))) {
-    cat(unique(not_available$AphiaID)[i], "\n")
-    mp_standardize(species = unique(not_available$AphiaID)[i],
-                   species_list = "analysis/wwf_2024/wwf_list.csv",
-                   sdm_base = rast("data/env/current/thetao_baseline_depthsurf_mean.tif"),
-                   species_folder = "../mpaeu_shared/")
+    cat(unique(not_available$AphiaID)[i], " skipping\n")
+    # mp_standardize(species = unique(not_available$AphiaID)[i],
+    #                species_list = "analysis/wwf_2024/wwf_list.csv",
+    #                sdm_base = rast("data/env/current/thetao_baseline_depthsurf_mean.tif"),
+    #                species_folder = "../")
   } else {
     cat(unique(not_available$AphiaID)[i], "done \n")
   }

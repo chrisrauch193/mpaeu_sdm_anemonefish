@@ -38,12 +38,12 @@
 .cm_check_coastal <- function(species_data, env, coord_names, verbose) {
   
   if ("coastal" %in% names(env$hypothesis)) {
-    # Test if is within europe/coastal
-    europe_starea <- terra::vect("data/shapefiles/mpa_asia_starea_v1.shp")
-    europe_starea <- terra::ext(europe_starea)
+    # Test if is within asia/coastal
+    asia_starea <- terra::vect("data/shapefiles/mpa_asia_starea_v1.shp")
+    asia_starea <- terra::ext(asia_starea)
     
     is_within <- terra::is.related(terra::vect(species_data[,coord_names], geom = coord_names),
-                            europe_starea, "intersects")
+                            asia_starea, "intersects")
     if (!all(is_within)) {
       env$hypothesis <- env$hypothesis[names(env$hypothesis) != "coastal"]
       env$layers <- terra::subset(env$layers, "wavefetch", negate = T)
@@ -62,7 +62,7 @@
         env$layers <- terra::subset(env$layers, "wavefetch", negate = T)
         if (verbose) cli::cli_alert_warning("Coastal hypothesis found but discarded")
       } else {
-        env$layers <- terra::crop(env$layers, europe_starea)
+        env$layers <- terra::crop(env$layers, asia_starea)
       }
     }
   }
@@ -127,7 +127,7 @@
     bath[bath < bath_range[1] | bath > bath_range[2]] <- NA
     
     if ("coastal" %in% names(env$hypothesis)) {
-      bath <- crop(bath, europe_starea)
+      bath <- crop(bath, asia_starea)
       env$layers <- mask(crop(env$layers, ecoreg_sel), bath)
       env$layers <- mask(env$layers, env$layers$wavefetch)
     } else {
@@ -136,7 +136,7 @@
     
   } else {
     if ("coastal" %in% names(env$hypothesis)) {
-      ecoreg_sel <- crop(ecoreg_sel, europe_starea)
+      ecoreg_sel <- crop(ecoreg_sel, asia_starea)
       env$layers <- mask(env$layers, ecoreg_sel)
     } else {
       env$layers <- mask(env$layers, ecoreg_sel)
@@ -639,6 +639,8 @@ split_ds <- function(sp_occ,
   } else {
     stop("What should be one of `fit_points` or `eval_points`")
   }
+  
+  # browser()
   
   pts <- sp_occ %>%
     filter(data_type == to_get) %>%

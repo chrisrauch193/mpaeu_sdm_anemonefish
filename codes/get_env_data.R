@@ -45,10 +45,8 @@ datasets <- c(
   "mlotst_baseline_2000_2019_depthsurf"
 )
 
-# datasets <- c(datasets,
-#               gsub("depthsurf", "depthmean", datasets))
 datasets <- c(datasets,
-              gsub("depthsurf", "depthsurf", datasets))
+              gsub("depthsurf", "depthmean", datasets))
 
 
 # List scenarios to download ----

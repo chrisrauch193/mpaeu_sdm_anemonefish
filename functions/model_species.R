@@ -80,8 +80,6 @@ model_species <- function(species,
                           quad_samp = 50000,
                           cleanup = TRUE,
                           verbose = FALSE) {
-  cli::cli_inform("Current working directory: {.path {getwd()}}")
-
   # Check verbosity
   verb_1 <- verb_2 <- FALSE
   if (is.numeric(verbose)) {
@@ -97,7 +95,7 @@ model_species <- function(species,
   }
   
   if (verb_1) cli::cli_alert_info("Starting model for species {species}")
-
+  
   if (cleanup && dir.exists(file.path(outfolder, paste0("taxonid=", species)))) {
     fs::dir_delete(file.path(outfolder, paste0("taxonid=", species)))
   }
@@ -123,8 +121,7 @@ model_species <- function(species,
   mod_out <- paste0(outfolder, "/taxonid=", species, "/model=", outacro, "/models/")
   fig_out <- paste0(outfolder, "/taxonid=", species, "/model=", outacro, "/figures/")
   
-  setwd("/home/bi-server-kyoto/a0236995/mpaeu_sdm_anemonefish")
-  
+
   # Load species data
   if (verb_1) cli::cli_alert_info("Reading data")
   species_data <- .cm_load_species(species, species_dataset)
@@ -181,32 +178,32 @@ model_species <- function(species,
     
     # PART 2: DATA PREPARING ----
     if (verb_1) cli::cli_alert_info("Preparing data")
-
+    
     # Check which eco-regions are covered by the points
     ecoreg_unique <- ecoregions$Realm[is.related(ecoregions,
                                                  vect(bind_rows(fit_pts, eval_pts),
                                                       geom = coord_names),
                                                  "intersects")]
-
+    
     model_log$model_details$ecoregions <- ecoreg_unique
     ecoreg_occ <- ecoregions[ecoregions$Realm %in% ecoreg_unique,]
-
+    
     # Apply a buffer to ensure that all areas are covered
     sf::sf_use_s2(FALSE)
     ecoreg_occ_buff <- suppressMessages(
       suppressWarnings(vect(sf::st_buffer(sf::st_as_sf(vect(bind_rows(fit_pts, eval_pts),
                                                             geom = coord_names)), 0.2)))
     )
-
+    
     adj_ecoreg <- ecoregions$Realm[is.related(ecoregions, ecoreg_occ_buff,
                                               "intersects")]
-
+    
     # Mask areas
     ecoreg_sel <- ecoregions[ecoregions$Realm %in% unique(
       c(ecoreg_unique, adj_ecoreg)
     ),]
     model_log$model_details$ecoregions_included <- unique(ecoreg_sel$Realm)
-
+    
     # # Apply a buffer to ensure that all areas are covered
     # Not necessary anymore, shapefile was adjusted
     # sf::sf_use_s2(FALSE)
@@ -244,8 +241,8 @@ model_species <- function(species,
       bath[bath < bath_range[1] | bath > bath_range[2]] <- NA
       
       if ("coastal" %in% names(env$hypothesis)) {
-        europe_starea <- terra::vect("data/shapefiles/mpa_asia_starea_v1.shp")
-        bath <- terra::crop(bath, europe_starea)
+        asia_starea <- terra::vect("data/shapefiles/mpa_asia_starea_v1.shp")
+        bath <- terra::crop(bath, asia_starea)
         env$layers <- terra::mask(terra::crop(env$layers, ecoreg_sel), bath)
         env$layers <- terra::mask(env$layers, env$layers$wavefetch)
       } else {
@@ -257,8 +254,8 @@ model_species <- function(species,
       
     } else {
       if ("coastal" %in% names(env$hypothesis)) {
-        europe_starea <- terra::vect("data/shapefiles/mpa_asia_starea_v1.shp")
-        ecoreg_sel <- terra::crop(ecoreg_sel, europe_starea)
+        asia_starea <- terra::vect("data/shapefiles/mpa_asia_starea_v1.shp")
+        ecoreg_sel <- terra::crop(ecoreg_sel, asia_starea)
         env$layers <- terra::mask(env$layers, ecoreg_sel)
       } else {
         env$layers <- terra::mask(env$layers, ecoreg_sel)
@@ -283,7 +280,7 @@ model_species <- function(species,
     # Assess SAC
     fit_pts_sac <- try(obissdm::outqc_sac_mantel(fit_pts, 
                                                  env_layers = terra::subset(env$layers, env$hypothesis[[1]]),
-                                                 plot_result = TRUE,
+                                                 plot_result = FALSE,
                                                  verbose = verb_2))
     
     if (inherits(fit_pts_sac, "try-error")) {
@@ -371,7 +368,7 @@ model_species <- function(species,
                         "_what=biasmetrics.rds")
       saveRDS(list(k_stat = spat_env_k, l_stat = spat_env_l),
               file = outfile)
-        
+      
       treg <- obissdm::.get_time(treg, "Sample bias assessment")
     }
     
@@ -380,13 +377,13 @@ model_species <- function(species,
     
     if (length(env$hypothesis) != 1) {
       multi_mod <- sdm_multhypo(sdm_data = sp_data, sdm_method = "rf",
-                                    variables = env$hypothesis,
-                                    options = algo_opts[["rf"]],
-                                    verbose = verb_2)
+                                variables = env$hypothesis,
+                                options = algo_opts[["rf"]],
+                                verbose = verb_2)
     } else {
       if (verb_1) cli::cli_alert_info("Only one hypothesis available - skipping")
       multi_mod <- list(best_model = names(env$hypothesis),
-                            best_variables = env$hypothesis[[1]])
+                        best_variables = env$hypothesis[[1]])
     }
     
     model_log$model_details$hypothesis_tested <- env$hypothesis
@@ -427,8 +424,8 @@ model_species <- function(species,
     
     if (any(unlist(model_log$model_result) == "succeeded")) {
       if (verb_1) cli::cli_alert_info("Model fitting concluded. Checking if models are good")
-     
-       # PART 6: PREDICTION ----
+      
+      # PART 6: PREDICTION ----
       
       # Get what models are above threshold
       good_models <- lapply(model_fits, function(model){
@@ -503,7 +500,7 @@ model_species <- function(species,
                                                    conf_file = "sdm_conf.yml", 
                                                    verbose = verb_2)
             env_to_pred <- terra::subset(env_to_pred, colnames(sp_data$training)[-1])
-
+            
             if (best_hyp == "coastal") {
               env_to_pred <- terra::mask(terra::crop(env_to_pred, env$layers[[1]]), env$layers[[1]])
             }
@@ -810,9 +807,9 @@ model_species <- function(species,
           ensemble_metrics <- rbind(ensemble_metrics, avg_fit_metrics)
           
           arrow::write_parquet(ensemble_metrics,
-                        paste0(metric_out, 
-                               "taxonid=", species, "_model=", outacro,
-                               "_method=ensemble_what=cvmetrics.parquet"))
+                               paste0(metric_out, 
+                                      "taxonid=", species, "_model=", outacro,
+                                      "_method=ensemble_what=cvmetrics.parquet"))
         }
         
         # Ensemble response curves
@@ -884,8 +881,8 @@ model_species <- function(species,
         thresh <- left_join(thresh_p10_mtp, thresh_maxss, by = "model")
         
         arrow::write_parquet(thresh, paste0(metric_out,
-                                     "taxonid=", species, "_model=", outacro,
-                                     "_what=thresholds.parquet"))
+                                            "taxonid=", species, "_model=", outacro,
+                                            "_what=thresholds.parquet"))
         
         
         
@@ -916,13 +913,13 @@ model_species <- function(species,
         conv_hull_mask <- mask(base_layer, conv_hull)
         
         minb_circle <- terra::minCircle(terra::vect(sp_data$coord_training[sp_data$training$presence == 1,],
-                                                 geom = coord_names, crs = "EPSG:4326"))
+                                                    geom = coord_names, crs = "EPSG:4326"))
         minb_circle_mask <- mask(base_layer, minb_circle)
         
         # Buffer mask
         buff_pts <-  terra::buffer(terra::vect(sp_data$coord_training[sp_data$training$presence == 1,],
-                                                   geom = coord_names, crs = "EPSG:4326"),
-                                    width = 100000)
+                                               geom = coord_names, crs = "EPSG:4326"),
+                                   width = 100000)
         buff_pts_mask <- mask(base_layer, buff_pts)
         
         masks <- c(ecoreg_occ_mask, ecoreg_mask, fit_mask, conv_hull_mask, minb_circle_mask, buff_pts_mask)
@@ -947,7 +944,7 @@ model_species <- function(species,
         
         # PART 11: EVALUATE MODELS USING OTHER TECHNIQUES ----
         if (verb_1) cli::cli_alert_info("Performing post-evaluation")
-
+        
         if (sum(sp_data$training$presence) > 5000) {
           sp_data_post <- sp_data
           which_pres <- which(sp_data$training$presence == 1)
@@ -956,7 +953,7 @@ model_species <- function(species,
           sp_data_post$training <- sp_data$training[c(which_pres, which_bckg),]
           sp_data_post$coord_training <- sp_data$coord_training[c(which_pres, which_bckg),]
           model_log$other_details <- c(model_log$other_details,
-                                     "post evaluation based on 5000 occurrence records")
+                                       "post evaluation based on 5000 occurrence records")
         } else {
           sp_data_post <- sp_data
         }
@@ -974,7 +971,7 @@ model_species <- function(species,
           } else {
             new_names <- c(algorithms[good_models], "ensemble")
           }
-
+          
           niche_eval <- try(lapply(1:length(model_predictions), function(id){
             result <- .cm_posteval_nicheequiv(sp_data_post, model_predictions[[id]], env$layers,
                                               iterations = 5, plot_example = F)
@@ -1038,8 +1035,8 @@ model_species <- function(species,
             niche_eval_table <- dplyr::relocate(niche_eval_table, "model", "occupancy", .before = "type")
             
             arrow::write_parquet(niche_eval_table, paste0(metric_out,
-                                             "taxonid=", species, "_model=", outacro,
-                                             "_what=posteval_hyperniche.parquet"))
+                                                          "taxonid=", species, "_model=", outacro,
+                                                          "_what=posteval_hyperniche.parquet"))
             rm(niche_eval, niche_eval_table)
           } else {
             warning("hyperniche post-evaluation failed with status\n", niche_eval)
@@ -1083,9 +1080,9 @@ model_species <- function(species,
         save_models <- lapply(good_models, function(id) {
           
           model_name <- model_fits[[id]]$name
-
+          
           reduced_model <- try(.reduce_model_file(model_fits[[id]]))
-
+          
           if (!inherits(reduced_model, "try-error")) {
             model_fits[[id]] <- reduced_model
           }
@@ -1104,9 +1101,9 @@ model_species <- function(species,
         
         # Save fit points
         arrow::write_parquet(sp_data$coord_training[sp_data$training$presence == 1,],
-                      paste0(outfolder, "/taxonid=", species, "/model=", outacro,
-                             "/taxonid=", species, "_model=", outacro, "_",
-                             "what=fitocc.parquet"))
+                             paste0(outfolder, "/taxonid=", species, "/model=", outacro,
+                                    "/taxonid=", species, "_model=", outacro, "_",
+                                    "what=fitocc.parquet"))
         
         treg <- as.data.frame(unclass(treg))
         treg <- data.frame(what = row.names(treg), time_mins = treg[,1])
@@ -1132,7 +1129,7 @@ model_species <- function(species,
       if (verb_1) cli::cli_alert_warning("All models failed")
       st_status <- "all_failed"
       if (dir.exists(file.path(outfolder, paste0("taxonid=", species)))) {
-          fs::dir_delete(file.path(outfolder, paste0("taxonid=", species)))
+        fs::dir_delete(file.path(outfolder, paste0("taxonid=", species)))
       }
     }
     

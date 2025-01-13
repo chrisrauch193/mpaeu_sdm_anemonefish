@@ -50,6 +50,7 @@ po/*~
 rsconnect/
 
 data/
+data/env/
 _species_info/
 sdmrun/
 sdmrun_b/
